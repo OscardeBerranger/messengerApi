@@ -6,6 +6,7 @@ const messagesPageButton = document.querySelector("#messagesPage")
 const autrechoseButton = document.querySelector("#autrechose")
 const signInPageButton = document.querySelector('#signInPage')
 let currentUserI = 39
+let token ;
 
 
 messagesPageButton.addEventListener("click", displayMessagesPage)
@@ -75,9 +76,14 @@ function getRegisterTemplate(){
 
 async function getMessagesFromApi(){
 
-    let url = `${baseURL}/api/messages/`
+    let url = `${baseURL}/api/messages`
+    console.log(token)
+    let fetchParam = {
+        headers : {'Authorization':`Bearer ${token}`, 'Content-Type':'application/json'},
+        method : "GET"
+    }
 
-  return await fetch(url)
+  return await fetch(url, fetchParam)
         .then(response=>response.json())
         .then(messages=>{
 
@@ -104,29 +110,6 @@ function displayMessagesPage(){
 
     })
 
-}
-
-function fregister(username, password) {
-    let url = `${baseURL}/register`
-    let body = {
-        username: username,
-        password: password
-    }
-    let bodySerialise = JSON.stringify(body)
-
-    let fetchParams = {
-        method : "POST",
-        body: bodySerialise
-
-    }
-
-
-    fetch(url, fetchParams)
-        .then(response=>response.json())
-        .then(data=>{
-            console.log(data)
-            currentUserI = data.id
-        })
 }
 
 function loadForRegister(){
@@ -172,6 +155,7 @@ function getSignInTemplate(){
             <input type="text" name="signInUserName" id="signInUserName" placeholder="Username">
             <label for="signInPassword"></label>
             <input type="password" name="signInPassword" id="signInPassword" placeholder="password">
+            <button class="submitSignIn">Sign in</button>
 
     `
     return template
@@ -180,4 +164,37 @@ function getSignInTemplate(){
 function displaySignInPage(){
     let signInPage = getSignInTemplate()
     display(signInPage)
+    const username = document.querySelector('#signInUserName')
+    const password = document.querySelector('#signInPassword')
+    const bouton = document.querySelector('.submitSignIn')
+    console.log(username, password)
+    bouton.addEventListener('click', ()=>{
+        signIn(username.value, password.value)
+    })
+}
+
+function signIn(username, password){
+    let url = `${baseURL}/login`
+    let body = {
+        username: username,
+        password: password
+    }
+    let bodySerialise = JSON.stringify(body)
+
+    let fetchParams = {
+        headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        method : "POST",
+        body: bodySerialise
+
+    }
+
+
+    fetch(url, fetchParams)
+        .then(response=>response.json())
+        .then(data=>{
+            token = data.token
+        })
 }
