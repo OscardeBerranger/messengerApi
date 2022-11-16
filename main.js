@@ -1,94 +1,89 @@
-const messagesContainer = document.querySelector(".messages")
-const fetchMessagesButton = document.querySelector("#fetchMessages")
-const messageField = document.querySelector("#messageField")
-const sendButton = document.querySelector("#sendMessage")
-const regUsername = document.querySelector("#regUsername")
-const regPassword = document.querySelector("#regPassword")
-const regButton = document.querySelector("#register")
-
-sendButton.addEventListener("click", ()=>{
-    sendMessage(messageField.value)
-    fetchAllMessages()
-    messageField.value = ""
-})
-
-regButton.addEventListener("click", ()=>{
-    register(regUsername.value, regPassword.value)
-})
+const baseURL = "https://139.162.156.85:8000/"
 
 
-let userId = 2
+const mainContainer = document.querySelector("#main")
+const messagesPageButton = document.querySelector("#messagesPage")
+const autrechoseButton = document.querySelector("#autrechose")
 
-fetchMessagesButton.addEventListener("click", fetchAllMessages)
 
-function fetchAllMessages(){
-    let url = "https://localhost:8000/messages"
+messagesPageButton.addEventListener("click", displayMessagesPage)
+autrechoseButton.addEventListener("click", displayAutreChose)
 
-    fetch(url)
-        .then(response=>response.json())
-        .then(messages=>{
-            clearMessages()
-            messages.forEach(message=>{
-                displayMessageTemplate(message)
-            })
 
-        })
+function clearMainContainer(){
+    mainContainer.innerHTML= ""
 }
 
-function displayMessageTemplate(message){
 
-        let template = `
+function display(content){
+    //vider la div principale
+    clearMainContainer()
+    //et y ajouter le contenu qu'elle recoit
+
+    mainContainer.innerHTML=content
+}
+
+function getMessageTemplate(message){
+
+    let template = `
                             <div class="row border border-dark">
                                 <p>Author : ${message.author.username}</p>
                                 <p><strong>${message.content}</strong></p>
                             </div>
                         `
-    messagesContainer.innerHTML += template
-}
 
-function clearMessages(){
-    messagesContainer.innerHTML = ""
-}
-
-function sendMessage(messageText){
-    let url = `https://localhost:8000/messages/${userId}/new`
-    let body = {
-        content : messageText
-    }
-
-
-    let bodySerialise = JSON.stringify(body)
-
-    let fetchParams = {
-        method : "POST",
-        body: bodySerialise
-
-    }
-
-
-    fetch(url, fetchParams)
+    return template
 
 }
 
-function register(username, password){
-    let url = `https://localhost:8000/register`
-    let body = {
-        username : username,
-        password : password
-    }
+function getMessagesTemplate(messages){
 
+    let messagesTemplate = ""
 
-    let bodySerialise = JSON.stringify(body)
+    messages.forEach(message=>{
 
-    let fetchParams = {
-        method : "POST",
-        body: bodySerialise
+      messagesTemplate+=  getMessageTemplate(message)
+    })
 
-    }
+    return messagesTemplate
 
+}
 
-    fetch(url, fetchParams)
+function getRegisterTemplate(){
+    let template = ``
+    return template
+}
+
+async function getMessagesFromApi(){
+
+    let url = `${baseURL}messages/`
+
+  return await fetch(url)
         .then(response=>response.json())
-        .then(data=>console.log(data))
+        .then(messages=>{
+
+           return messages
+
+        })
 }
 
+function displayMessagesPage(){
+
+    getMessagesFromApi().then(messages=>{
+
+        display(
+            getMessagesTemplate(messages)
+            )
+
+
+    })
+
+}
+
+function displayAutreChose(){
+    display("voila autrechose")
+}
+
+function displayRegisterPage(){
+    display(getRegisterTemplate)
+}
