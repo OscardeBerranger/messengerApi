@@ -5,6 +5,10 @@ const mainContainer = document.querySelector("#main")
 const messagesPageButton = document.querySelector("#messagesPage")
 const autrechoseButton = document.querySelector("#autrechose")
 const signInPageButton = document.querySelector('#signInPage')
+const myModal = document.querySelector('#myModal')
+const closeModal = document.querySelector(".closeModal");
+const toTheTop = document.querySelector('.toTheTop')
+
 
 messagesPageButton.addEventListener("click", ()=>{
     displayMessagesPage()
@@ -20,7 +24,12 @@ signInPageButton.addEventListener('click', ()=>{
     displaySignInPage()
     document.querySelector('.containerMainTitle').style.opacity = 0
 })
-
+closeModal.addEventListener('click', ()=>{
+    myModal.style.display = "none"
+})
+toTheTop.addEventListener('click', ()=>{
+    window.scrollTo(0, 0)
+})
 
 //Chargement des messages
 async function getMessagesFromApi(){
@@ -49,6 +58,7 @@ function getSignInTemplate(){
             <label for="signInPassword"></label>
             <input type="password" name="signInPassword" id="signInPassword" placeholder="password">
             <button class="submitSignIn">Sign in</button>
+            <span id="error">    </span>
 
     `
     return template
@@ -106,6 +116,7 @@ function getMessagesTemplate(messages){
         messagesTemplate+=  getMessageTemplate(message)
     })
 
+
     return messagesTemplate
 
 }
@@ -118,6 +129,7 @@ function getRegisterTemplate(){
                 <input type="text" name="username" id="regUsername" placeholder="Enter your new username">
                 <input type="password" name="password" id="regPassword" placeholder="Enter your new password">
                 <button id="register">Sign up</button>
+                <span id="errorRegister" style="color: #8f0404"></span>
 
     `
     return template
@@ -130,9 +142,17 @@ function clearMainContainer(){
 
 //Charge la page des messages
 function loadForRegister(){
-    let username = document.querySelector('#regUsername').value
-    let password = document.querySelector('#regPassword').value
-    fregister(username, password)
+    const username = document.querySelector('#regUsername')
+    const password = document.querySelector('#regPassword')
+    console.log(password)
+    if (password.value !== ""){
+        fregister(username.value, password.value)
+    }else {
+        document.querySelector('#errorRegister').innerHTML = ""
+        document.querySelector('#errorRegister').innerHTML += "Le mot de passe doit etre renseigné"
+    }
+
+    // fregister(username, password)
 }
 
 //Affiche sur la page une template donnée
@@ -160,7 +180,8 @@ function displayMessagesPage(){
             displayMessagesPage()
         })
 
-
+        window.scrollTo(0, document.body.scrollHeight);
+        toTheTop.style.display = "block"
     })
 
 }
@@ -172,6 +193,7 @@ function displayRegisterPage(){
     let bouton = document.querySelector('#register')
     bouton.addEventListener('click', ()=>{
         loadForRegister()
+
     })
     if (!mainContainer.classList.contains("active")){
         mainContainer.classList.toggle('active')
@@ -184,8 +206,10 @@ function displaySignInPage(){
     const username = document.querySelector('#signInUserName')
     const password = document.querySelector('#signInPassword')
     const bouton = document.querySelector('.submitSignIn')
+
     bouton.addEventListener('click', ()=>{
         signIn(username.value, password.value)
+
     })
     if (!mainContainer.classList.contains("active")){
         mainContainer.classList.toggle('active')
@@ -220,7 +244,7 @@ function sendMessage(userMessage){
 }
 
 //Permet de se connecter
-function signIn(username, password){
+function signIn(username, password) {
     let url = `${baseURL}/login`
     let body = {
         username: username,
@@ -242,17 +266,24 @@ function signIn(username, password){
     fetch(url, fetchParams)
         .then(response=>response.json())
         .then(data=>{
-            token = data.token
-            document.querySelector('.btnRegisterSignUp').innerHTML = `
+            if (data.token){
+                token = data.token
+                document.querySelector('.btnRegisterSignUp').innerHTML = `
             <p>${username}</p>
             <button class="button" id="logOut">Log Out <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></button>
             `
-            displayMessagesPage()
+                displayMessagesPage()
+            }else document.querySelector('#error').innerHTML = "Password or username don't match"
+
         })
         .then(()=>{
             document.querySelector('#logOut').addEventListener('click', ()=>{
                 token = null
-                window.location.reload()
+                displaySignInPage()
+                document.querySelector('.btnRegisterSignUp').innerHTML = `
+                        <button class="button" id="autrechose">Register</button>
+                        <button class="button" id="signInPage">Sign In <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-in"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg></button></div>
+                `
             })
         })
 }
@@ -278,6 +309,10 @@ function fregister(username, password){
     fetch(url, fetchParams)
         .then(response=>response.json())
         .then(data=> {
-            console.log(data)
-        })
+                console.log(data)
+                if (typeof data == "string"){
+                    myModal.style.display = "block";
+                }
+            })
+
 }
