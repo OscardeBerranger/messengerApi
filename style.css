@@ -1,3 +1,95 @@
-.rouge{
-    background-color: red;
+*
+{
+    color: white;
+}
+body{
+    background-color: #1f1f1f;
+}
+.navbar{
+    display: flex;
+    justify-content: space-evenly;
+}
+.containerMainTitle{
+    text-align: center;
+    transform: translateY(  20vh);
+}
+.containerMainTitle>h2{
+    animation: 1s animationTitleTop;
+}
+.containerMainTitle>h3{
+    animation: 1s animationTitleBottom;
+}
+@keyframes animationTitleTop {
+    from{transform : translateX(-10vh);opacity: 0;}
+    to{opacity: 1;}
+}
+
+@keyframes animationTitleBottom{
+    from{transform:translateY(10vh);opacity: 0;}
+    to{opacity: 1}
+}
+.button{
+    background-color: transparent;
+    transition: 0.5s;
+    margin: 15px;
+    width: 100px;
+    height: 30px;
+    border-color: transparent;
+}
+.button:hover{
+    --angle: 0deg;
+    transform: scale(1.05);
+    border-image: conic-gradient(from var(--angle), red, yellow, lime, aqua, blue, magenta, red) 1;
+    animation: 8s rotate linear infinite;
+}
+
+@keyframes rotate {
+    to {
+        --angle: 360deg;
+    }
+}
+
+@property --angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+#main{
+    border: 2px solid;
+    width:0vh;
+    height: 0vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    --angle: 0deg;
+    opacity: 0;
+    border-image: conic-gradient(from var(--angle), red, yellow, lime, aqua, blue, magenta, red) 1;
+    animation: 8s rotate linear infinite;
+}
+#main.active{
+    width: 40vh;
+    height: 50vh;
+    opacity: 1;
+}
+#main>*{
+    margin: 15px;
+}
+#main>button{
+    background-color: transparent;
+    width: 20vh;
+    border: none;
+}
+#main>input{
+    background-color: #363636;
+    width: 250px;
+    height: 50px;
+    border:0px solid transparent;
+    border-radius: 50px;
+    text-align: center;
+}
+
+#logOut{
+    background-color: transparent;
+    border: 0px solid transparent;
 }
