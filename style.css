@@ -143,8 +143,28 @@ body{
     bottom: 50px;
     transform: scale(1.4);
 }
-.deleteMsg{
+.btnMsg{
     background-color:transparent;
     border:none;
     color: #8f0404;
+}
+.editor{
+    position: fixed;
+}
+.editor>input{
+    background-color: #363636;
+    border:none;
+    height: 50px;
+    width: 300px;
+    border-radius: 50px;
+    text-align: center;
+}
+.editor>button{
+    background-color: transparent;
+    border:none;
+}
+.btnReply{
+    width: 13px;
+    background-color: transparent;
+    border: none;
 }
