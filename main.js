@@ -2,6 +2,7 @@ const baseURL = "https://b1messenger.tk"
 let token;
 let currenUserId;
 
+const containerMainTitle = document.querySelector('.containerMainTitle')
 const mainContainer = document.querySelector("#main");
 const messagesPageButton = document.querySelector("#messagesPage");
 const autrechoseButton = document.querySelector("#autrechose");
@@ -26,9 +27,6 @@ signInPageButton.addEventListener('click', ()=>{
 });
 closeModal.addEventListener('click', ()=>{
     myModal.style.display = "none"
-});
-toTheTop.addEventListener('click', ()=>{
-    window.scrollTo(0, 0)
 });
 
 //Chargement des messages
@@ -85,45 +83,96 @@ function getMessageTemplate(message){
 
     let template
 
-    if (message.author.username == currenUserId){
-        template =  `
-                            <div class="row border border-dark">
+    if (message.author.username === currenUserId){
+        if (message.responses.length>0) {
+            let allResponses =""
+            message.responses.forEach(response=>{
+               allResponses += `<p class="responses">${response.content}</p>`
+            })
+            console.log(allResponses)
+            template = `
+                            <div class="row myMsg">
+                                <p>Author : ${message.author.username}</p>
+                                <p> Sent  ${time} ago.</p>
+                                <p>${message.content}<button class="btnMsg deleteMsg" id="${message.id}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/> </svg></button> <button class="btnMsg editMsg" id="${message.id}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16"> <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/> </svg></button></p>
+                                <p>Réponses</p>
+                                <div class="dropdown">
+                                    ${allResponses}
+                                </div>
+                                
+                            </div>
+                            <div class="arrow-right"></div>
+                        `
+        }else {
+            template = `
+                            <div class="row myMsg">
                                 <p>Author : ${message.author.username}</p>
                                 <p> Sent  ${time} ago.</p>
                                 <p>${message.content}<button class="btnMsg deleteMsg" id="${message.id}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/> </svg></button> <button class="btnMsg editMsg" id="${message.id}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16"> <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/> </svg></button></p>
                             </div>
+                            <div class="arrow-right"></div>
                         `
-    }else {template =  `
-                            <div class="row border border-dark">
+        }
+    }else {
+        if (message.responses.length>0) {
+            let allResponses =""
+            message.responses.forEach(response=>{
+                allResponses += `<p class="responses">${response.content}</p>`
+            })
+            template = `
+                            <div class="row notMyMsg">
                                 <p>Author : ${message.author.username}</p>
                                 <p> Sent  ${time} ago.</p>
+                                <p>${message.content}</p>
+                                <button class="btnReply" id="${message.id}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-reply-all" viewBox="0 0 16 16"> <path d="M8.098 5.013a.144.144 0 0 1 .202.134V6.3a.5.5 0 0 0 .5.5c.667 0 2.013.005 3.3.822.984.624 1.99 1.76 2.595 3.876-1.02-.983-2.185-1.516-3.205-1.799a8.74 8.74 0 0 0-1.921-.306 7.404 7.404 0 0 0-.798.008h-.013l-.005.001h-.001L8.8 9.9l-.05-.498a.5.5 0 0 0-.45.498v1.153c0 .108-.11.176-.202.134L4.114 8.254a.502.502 0 0 0-.042-.028.147.147 0 0 1 0-.252.497.497 0 0 0 .042-.028l3.984-2.933zM9.3 10.386c.068 0 .143.003.223.006.434.02 1.034.086 1.7.271 1.326.368 2.896 1.202 3.94 3.08a.5.5 0 0 0 .933-.305c-.464-3.71-1.886-5.662-3.46-6.66-1.245-.79-2.527-.942-3.336-.971v-.66a1.144 1.144 0 0 0-1.767-.96l-3.994 2.94a1.147 1.147 0 0 0 0 1.946l3.994 2.94a1.144 1.144 0 0 0 1.767-.96v-.667z"/> <path d="M5.232 4.293a.5.5 0 0 0-.7-.106L.54 7.127a1.147 1.147 0 0 0 0 1.946l3.994 2.94a.5.5 0 1 0 .593-.805L1.114 8.254a.503.503 0 0 0-.042-.028.147.147 0 0 1 0-.252.5.5 0 0 0 .042-.028l4.012-2.954a.5.5 0 0 0 .106-.699z"/> </svg></button>
+                                <div class="dropdown">
+                                <p>Réponses</p>
+                                    <div class="dropdown-content">
+                                        ${allResponses}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="arrow-left"></div>
+                        `
+        }else{
+            template = `
+                            <div class="row notMyMsg">
+                                <p>Author : ${message.author.username}</p>
+                                <p> Sent  ${time} ago.</p>
+                                <p>${message.content}</p>
                                 <button class="btnReply" id="${message.id}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-reply-all" viewBox="0 0 16 16"> <path d="M8.098 5.013a.144.144 0 0 1 .202.134V6.3a.5.5 0 0 0 .5.5c.667 0 2.013.005 3.3.822.984.624 1.99 1.76 2.595 3.876-1.02-.983-2.185-1.516-3.205-1.799a8.74 8.74 0 0 0-1.921-.306 7.404 7.404 0 0 0-.798.008h-.013l-.005.001h-.001L8.8 9.9l-.05-.498a.5.5 0 0 0-.45.498v1.153c0 .108-.11.176-.202.134L4.114 8.254a.502.502 0 0 0-.042-.028.147.147 0 0 1 0-.252.497.497 0 0 0 .042-.028l3.984-2.933zM9.3 10.386c.068 0 .143.003.223.006.434.02 1.034.086 1.7.271 1.326.368 2.896 1.202 3.94 3.08a.5.5 0 0 0 .933-.305c-.464-3.71-1.886-5.662-3.46-6.66-1.245-.79-2.527-.942-3.336-.971v-.66a1.144 1.144 0 0 0-1.767-.96l-3.994 2.94a1.147 1.147 0 0 0 0 1.946l3.994 2.94a1.144 1.144 0 0 0 1.767-.96v-.667z"/> <path d="M5.232 4.293a.5.5 0 0 0-.7-.106L.54 7.127a1.147 1.147 0 0 0 0 1.946l3.994 2.94a.5.5 0 1 0 .593-.805L1.114 8.254a.503.503 0 0 0-.042-.028.147.147 0 0 1 0-.252.5.5 0 0 0 .042-.028l4.012-2.954a.5.5 0 0 0 .106-.699z"/> </svg></button>
                             </div>
-                        `}
+                            <div class="arrow-left"></div>
+                        `
+        }
+    }
     return template
 
 }
 
 //Assemblage des messages, retourne une template
 function getMessagesTemplate(messages){
-
     let messagesTemplate = ""
-    let template = `
-        <label for="userMessage"></label>
-        <input type="text" name="" id="userMessage" placeholder="your message">
-        <button class="send">Send</button>
-        <button class="refresh">refresh</button>
-        `
-    messagesTemplate+= template
-
     messages.forEach(message=>{
         messagesTemplate+=getMessageTemplate(message)
     })
-    let templateEdit = `
-    
-    `
-    return messagesTemplate
+    let template = `
+        <div class="messagesContainer">
+               ${messagesTemplate}
+        </div>
+        <div style="position: relative; height: 15vh;"><span></span></div>
+        <div class="formContainerMessage">
+            <input type="text" name="" id="userMessage" placeholder="your message">
+            <button class="send"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16"> <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/> </svg></button>
+            <button class="refresh"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z"/> <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z"/> </svg></button>
+        </div>
+        `
 
+
+
+    mainContainer.style.border = "none"
+
+    return template
 }
 
 //Creation de la template register (Sign up)
@@ -238,8 +287,9 @@ function displayMessagesPage(){
             })
         })
 
+        containerMainTitle.style.pointerEvents = "none"
+
         window.scrollTo(0, document.body.scrollHeight);
-        toTheTop.style.display = "block"
     })
 
 }
@@ -332,6 +382,7 @@ function signIn(username, password) {
         .then(response=>response.json())
         .then(data=>{
             if (data.token){
+                console.log(data)
                 token = data.token
                 document.querySelector('.btnRegisterSignUp').innerHTML = `
             <p>${username}</p>
